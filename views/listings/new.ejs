@@ -1,0 +1,77 @@
+<% layout('/layouts/boilerplate') %>
+  <body>
+    <div class="container">
+      <h3 style="color:wheat;"><strong>Create a New Listing</strong></h3>
+      <form id="listingForm" method="POST" action="/listings" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="title" class="form-label"  style="color: antiquewhite;">Title</label>
+          <input id="title" name="listing[title]" placeholder="Enter title" type="text" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label"  style="color: antiquewhite;">Description</label>
+          <textarea id="description" name="listing[description]" placeholder="Enter description" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label"  style="color: antiquewhite;">Image URL/Link</label>
+          <input id="image" name="listing[image]" placeholder="Enter image URL/Link" type="file" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label"  style="color: antiquewhite;">Price</label>
+          <input id="price" name="listing[price]" placeholder="Enter price" type="number" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="country" class="form-label"  style="color: antiquewhite;">Country</label>
+          <input id="country" name="listing[country]" placeholder="Enter country" type="text" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="location" class="form-label"  style="color: antiquewhite;">Location</label>
+          <input id="location" name="listing[location]" placeholder="Enter location" type="text" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+    </div>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById('listingForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if(validateForm()) {
+          this.submit();
+        }
+      });
+
+      var inputs = document.querySelectorAll('input.form-control, textarea.form-control');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('blur', function() {
+          if (this.value.trim() === '') {
+            this.classList.add('is-invalid');
+          } else {
+            this.classList.remove('is-invalid');
+          }
+        });
+
+        inputs[i].addEventListener('focus', function() {
+          this.classList.remove('is-invalid');
+        });
+      }
+
+      function validateForm() {
+        var title = document.getElementById('title').value.trim();
+        var description = document.getElementById('description').value.trim();
+        var image = document.getElementById('image').value.trim();
+        var price = document.getElementById('price').value.trim();
+        var country = document.getElementById('country').value.trim();
+        var location = document.getElementById('location').value.trim();
+
+        if (title === '' || description === '' || image === '' || price === '' || country === '' || location === '') {
+          // alert('Please fill in all fields.');
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </body>

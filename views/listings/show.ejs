@@ -1,0 +1,98 @@
+<% layout('/layouts/boilerplate') %>
+<script>
+  const maptoken="<%=process.env.MAP_TOKEN%>"
+  const coordinates=<%- JSON.stringify(listing.geometry.coordinates) %>
+</script>
+<body class="bg-gray-100">
+  <div class="container mx-auto mt-8 px-4">
+    <div class="flex flex-wrap -mx-4">
+      <!-- Listing Details -->
+      <div class="w-full md:w-1/2 px-4 mb-8">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div class="p-4">
+            <h3 class="text-xl font-bold mb-2"><%= listing.title %></h3>
+            <ul class="list-none space-y-2">
+              <li><img src="<%= listing.image.url %>" class="w-full h-64 object-cover" alt=""></li>
+              <li><strong>Owned by: </strong><i><%=listing.owner.username%></i></li>
+              <li><strong>Description:</strong> <%= listing.description %></li>
+              <li><strong>Price:</strong> &#36; <%= listing.price.toLocaleString("en-Us") %></li>
+              <li><strong>Location:</strong> <%= listing.location %></li>
+              <li><strong>Country:</strong> <%= listing.country %></li>
+            </ul>
+            <% if(currUser && currUser._id.equals(listing.owner._id)){%>
+            <div class="mt-4 flex space-x-2">
+              <a href="/listings/<%= listing._id %>/edit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Edit this Listing</a>
+              <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                <button class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Delete this listing</button>
+              </form>
+            </div>
+            <%}%>
+          </div>
+        </div>
+      </div>
+      <!-- Review Form -->
+      <% if(currUser){ %>
+      <div class="w-full md:w-1/2 px-4 mb-8">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div class="p-4">
+            <h3 class="text-xl font-bold mb-2">Leave a review</h3>
+            <form action="/listings/<%= listing._id %>/reviews" method="POST" >
+              <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
+              <fieldset class="starability-slot">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+              <div class="mb-4">
+                <label for="comment" class="block text-sm font-medium text-gray-700">Comment</label>
+                <textarea name="review[comment]" id="comment" class="w-full mt-1 p-2 border border-gray-300 rounded" cols="30" rows="5" required></textarea>
+              </div>
+              <button class="bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <div class="container mx-auto px-4">
+    <%if(listing.reviews.length>0){%> 
+      <h3 class="text-xl font-bold mb-4"  style="color: antiquewhite;">All reviews</h3>
+      <div class="flex flex-wrap -mx-4">
+        <% for(review of listing.reviews) { %>
+          <div class="bg-white shadow-lg rounded-lg overflow-hidden w-full md:w-5/12 px-4 mb-6 mx-2">
+            <div class="p-4">
+              <div class="flex items-center space-x-4 mb-2">
+                <div class="text-gray-800 font-semibold"><%= review.author.username %></div>
+                <div class="text-yellow-500">
+                  <%= review.rating %> <i class="fas fa-star"></i>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-2"><%= review.comment %></p>
+              <% if(currUser && currUser._id.equals(review.author._id)){ %>
+                <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?id=<%= listing._id %>&_method=DELETE" method="POST" class="mt-2">
+                  <button class="text-red-500 hover:text-red-700">Delete</button>
+                </form>
+                
+                
+                <% } %>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        <%}%>
+    <h3 style="color: bisque; font-size: 30px;">Where you'll be</h3>
+    <div id="map">
+
+    </div>
+  </div>
+</body>
+<script src="/js/map.js"></script>
